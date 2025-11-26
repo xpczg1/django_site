@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Список объектов - Карта объектов{% endblock %}
+
+{% block content %}
+<style>
+    /* Стили для header */
+    .navbar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 1rem 0;
+        transition: all 0.3s ease;
+    }
+
+    /* Анимация появления footer */
+    .footer {
+        animation: fadeIn 1s ease-out 0.3s both;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 1rem 0;
+        transition: all 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="row mb-4">
+    <div class="col">
+        <h1>Список объектов</h1>
+        <p class="lead">Все объекты, доступные на платформе</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for object in objects %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            {% if object.image %}
+            <img src="{{ object.image.url }}" class="card-img-top" alt="{{ object.name }}" style="height: 200px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ object.name }}</h5>
+                <p class="card-text"><strong>Категория:</strong> {{ object.category.name }}</p>
+                <p class="card-text"><strong>Адрес:</strong> {{ object.address }}</p>
+                <p class="card-text">{{ object.description|truncatewords:30 }}</p>
+                <a href="{% url 'object-detail' object.id %}" class="btn btn-primary">Подробнее</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col">
+        <div class="alert alert-info">
+            Объекты пока не добавлены на сайт.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Пагинация -->
+{% if is_paginated %}
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Назад</a>
+        </li>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперед</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

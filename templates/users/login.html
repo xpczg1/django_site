@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход - Карта объектов{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Стили для header */
+    .navbar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 1rem 0;
+        transition: all 0.3s ease;
+    }
+
+    /* Анимация появления footer */
+    .footer {
+        animation: fadeIn 1s ease-out 0.3s both;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 1rem 0;
+        transition: all 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Стили для кнопок в стиле хэдера и футера */
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Вход в систему</h4>
+            </div>
+            <div class="card-body">
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    Неправильное имя пользователя или пароль. Пожалуйста, попробуйте снова.
+                </div>
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Имя пользователя</label>
+                        <input type="text" name="username" class="form-control" id="id_username" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Пароль</label>
+                        <input type="password" name="password" class="form-control" id="id_password" required>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Войти</button>
+                    </div>
+                </form>
+
+                <div class="mt-3 text-center">
+                    <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

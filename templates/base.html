@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Карта объектов{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-blue: #1e3a8a;
+            --secondary-blue: #3b82f6;
+            --light-blue: #dbeafe;
+            --primary-red: #dc2626;
+            --light-red: #fecaca;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1f2937;
+        }
+
+        .navbar {
+            background-color: var(--primary-blue);
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover .logo {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        .btn-danger {
+            background-color: var(--primary-red);
+            border-color: var(--primary-red);
+        }
+
+        .card {
+            border: 1px solid var(--secondary-blue);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: var(--light-blue);
+            border-bottom: 1px solid var(--secondary-blue);
+        }
+
+        .footer {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .alert-info {
+            background-color: var(--light-blue);
+            border-color: var(--secondary-blue);
+            color: var(--primary-blue);
+        }
+
+        .alert-danger {
+            background-color: var(--light-red);
+            border-color: var(--primary-red);
+            color: var(--primary-red);
+        }
+
+        /* Адаптивность для логотипа */
+        @media (max-width: 768px) {
+            .logo {
+                height: 35px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .logo {
+                height: 30px;
+            }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="/static/images/logo.png" alt="КартаОбъектов" class="logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'map' %}">Карта</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'object-list' %}">Объекты</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'profile' %}">Профиль</a></li>
+                                {% if user.is_staff %}
+                                    <li><a class="dropdown-item" href="/admin/">Админка</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <main class="container my-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer mt-5 py-3">
+        <div class="container text-center">
+            <span>© 2025 Карта Объектов. Все права защищены.</span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

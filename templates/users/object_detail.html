@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ object.name }} - Карта объектов{% endblock %}
+
+{% block content %}
+<style>
+    /* Стили для header */
+    .navbar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 1rem 0;
+        transition: all 0.3s ease;
+    }
+     /* Анимация появления footer */
+            .footer {
+                animation: fadeIn 1s ease-out 0.3s both;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                padding: 1rem 0;
+                transition: all 0.3s ease;
+            }
+        `;
+        document.head.appendChild(style);
+        </style>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8">
+        <h1>{{ object.name }}</h1>
+        <p class="lead">{{ object.category.name }}</p>
+        
+        {% if object.image %}
+        <img src="{{ object.image.url }}" alt="{{ object.name }}" class="img-fluid rounded mb-4">
+        {% endif %}
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Описание</h5>
+            </div>
+            <div class="card-body">
+                <p>{{ object.description }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Информация</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Адрес:</strong> {{ object.address }}</p>
+                <p><strong>Координаты:</strong> {{ object.latitude }}, {{ object.longitude }}</p>
+                <p><strong>Дата добавления:</strong> {{ object.created_at|date:"d.m.Y" }}</p>
+                
+                <div class="mt-4">
+                    <a href="{% url 'map' %}" class="btn btn-primary">Посмотреть на карте</a>
+                    <a href="{% url 'object-list' %}" class="btn btn-outline-primary">К списку объектов</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

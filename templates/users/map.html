@@ -1,0 +1,433 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Карта - Карта объектов{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        /* Анимации для страницы */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .page-enter {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+     /* Стили для header */
+    .navbar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 1rem 0;
+        transition: all 0.3s ease;
+    }
+
+
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            margin: 1rem 0 2rem 0;
+            color: white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.1"><polygon fill="white" points="0,1000 1000,0 1000,1000"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .lead {
+            font-size: 1.2rem;
+            color: #5a6c7d;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            line-height: 1.6;
+        }
+
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 20px;
+            border: 3px solid #fff;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .object-popup img {
+            max-width: 200px;
+            max-height: 150px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .object-popup {
+            text-align: center;
+        }
+
+        .object-popup h5 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .object-popup p {
+            color: #6c757d;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .object-popup .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .object-popup .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Стили для кнопки определения местоположения */
+        #locate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50px;
+            padding: 0.85rem 2rem;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        #locate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        #locate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        #locate-btn:hover::before {
+            left: 100%;
+        }
+
+        #locate-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Декоративные элементы */
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            left: 85%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            top: 80%;
+            left: 15%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            33% {
+                transform: translateY(-15px) rotate(120deg) scale(1.1);
+            }
+            66% {
+                transform: translateY(-8px) rotate(240deg) scale(0.9);
+            }
+        }
+
+        /* Кастомные стили для маркеров */
+        .leaflet-popup-content-wrapper {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+         /* Анимация появления footer */
+            .footer {
+                animation: fadeIn 1s ease-out 0.3s both;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                padding: 1rem 0;
+                transition: all 0.3s ease;
+            }
+        `;
+        document.head.appendChild(style);
+
+        .leaflet-popup-tip {
+            box-shadow: none;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 1.5rem;
+                margin: 0.5rem 0 1.5rem 0;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .lead {
+                font-size: 1rem;
+            }
+
+            #map {
+                height: 500px;
+                border-radius: 15px;
+            }
+
+            #locate-btn {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="page-enter">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <div class="hero-section">
+                <div class="floating-elements">
+                    <div class="floating-element"></div>
+                    <div class="floating-element"></div>
+                    <div class="floating-element"></div>
+                </div>
+                <div class="hero-content">
+                    <h1 class="text-white mb-3">🗺️ Интерактивная карта объектов</h1>
+                    <p class="lead text-white mb-0">
+                        Найдите интересующие вас объекты на карте. Для определения вашего местоположения нажмите кнопку ниже.
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-center mb-4">
+                <button id="locate-btn" class="btn btn-primary">
+                    📍 Определить мое местоположение
+                </button>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Анимация кнопок
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Создаем эффект пульсации
+                    const pulse = document.createElement('span');
+                    pulse.style.position = 'absolute';
+                    pulse.style.borderRadius = '50%';
+                    pulse.style.backgroundColor = 'rgba(255, 255, 255, 0.6)';
+                    pulse.style.transform = 'scale(0)';
+                    pulse.style.animation = 'pulse 0.6s linear';
+                    pulse.style.pointerEvents = 'none';
+
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    pulse.style.width = pulse.style.height = size + 'px';
+                    pulse.style.left = e.clientX - rect.left - size/2 + 'px';
+                    pulse.style.top = e.clientY - rect.top - size/2 + 'px';
+
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(pulse);
+
+                    setTimeout(() => {
+                        pulse.remove();
+                    }, 600);
+                });
+            });
+        });
+
+        // Добавляем стили для анимации пульсации
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% {
+                    transform: scale(0);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Инициализация карты
+        var map = L.map('map').setView([55.7558, 37.6173], 10); // Москва по умолчанию
+
+        // Добавление слоя карты
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Получение объектов из базы данных
+        var objects = [
+            {% for obj in objects %}
+            {
+                id: {{ obj.id }},
+                name: "{{ obj.name }}",
+                description: "{{ obj.description }}",
+                latitude: {{ obj.latitude }},
+                longitude: {{ obj.longitude }},
+                address: "{{ obj.address }}",
+                category: "{{ obj.category.name }}",
+                {% if obj.image %}
+                image: "{{ obj.image.url }}",
+                {% else %}
+                image: null,
+                {% endif %}
+                url: "{% url 'object-detail' obj.id %}"
+            },
+            {% endfor %}
+        ];
+
+        // Добавление маркеров для каждого объекта
+        objects.forEach(function(obj) {
+            var marker = L.marker([obj.latitude, obj.longitude]).addTo(map);
+
+            var popupContent = '<div class="object-popup">' +
+                '<h5>' + obj.name + '</h5>' +
+                '<p><strong>Категория:</strong> ' + obj.category + '</p>' +
+                '<p><strong>Адрес:</strong> ' + obj.address + '</p>';
+
+            if (obj.image) {
+                popupContent += '<img src="' + obj.image + '" alt="' + obj.name + '" class="img-fluid">';
+            }
+
+            popupContent += '<p>' + obj.description.substring(0, 100) + '...</p>' +
+                '<a href="' + obj.url + '" class="btn btn-primary btn-sm">Подробнее</a>' +
+                '</div>';
+
+            marker.bindPopup(popupContent);
+        });
+
+        // Определение местоположения пользователя
+        document.getElementById('locate-btn').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+
+                    // Перемещение карты к местоположению пользователя
+                    map.setView([lat, lng], 15);
+
+                    // Добавление маркера местоположения пользователя
+                    L.marker([lat, lng])
+                        .addTo(map)
+                        .bindPopup('<div class="object-popup"><h5>📍 Ваше местоположение</h5><p>Вы находитесь здесь</p></div>')
+                        .openPopup();
+
+                    // Добавляем круг для красивого отображения точности
+                    L.circle([lat, lng], {
+                        color: '#667eea',
+                        fillColor: '#667eea',
+                        fillOpacity: 0.1,
+                        radius: position.coords.accuracy
+                    }).addTo(map);
+
+                }, function(error) {
+                    alert('Не удалось определить ваше местоположение: ' + error.message);
+                });
+            } else {
+                alert('Геолокация не поддерживается вашим браузером');
+            }
+        });
+    </script>
+{% endblock %}
