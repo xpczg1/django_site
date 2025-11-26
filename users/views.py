@@ -2,11 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from django.utils import timezone
-from datetime import timedelta
-from .models import SessionHistory, UserProfile, Region
-from objects.models import Object
-from django.contrib.auth.models import User
+# Fix: Import from objects app instead of main
+from objects.models import Objects, Regions, Session_History
+
 
 def register(request):
     if request.method == 'POST':
@@ -19,47 +17,36 @@ def register(request):
         form = UserCreationForm()
     return render(request, 'users/register.html', {'form': form})
 
+
 def home(request):
-    return render(request, 'users/home.html')
+    # Простая статистика для главной страницы
+    total_objects = Objects.objects.count()
+    total_regions = Regions.objects.count()
+    total_sessions = Session_History.objects.count()
+
+    context = {
+        'total_objects': total_objects,
+        'total_regions': total_regions,
+        'total_sessions': total_sessions,
+    }
+    return render(request, 'users/home.html', context)
+
 
 def map_view(request):
-    return render(request, 'users/map.html')
+    objects = Objects.objects.all()
+    context = {
+        'objects': objects,
+    }
+    return render(request, 'users/map.html', context)
+
 
 @login_required
 def profile(request):
-    try:
-        user_profile = UserProfile.objects.get(user=request.user)
-    except UserProfile.DoesNotExist:
-        user_profile = UserProfile.objects.create(user=request.user)
-
-    # Получаем данные для профиля
-    user_objects_count = Object.objects.filter(created_by=request.user).count()
-
-    # Сессии за последний месяц
-    month_ago = timezone.now() - timedelta(days=30)
-    session_count = SessionHistory.objects.filter(
-        user=request.user,
-        login_time__gte=month_ago
-    ).count()
-
-    # Последние 5 сессий
-    recent_sessions = SessionHistory.objects.filter(
-        user=request.user
-    ).order_by('-login_time')[:5]
-
-    # Статистика системы
-    total_objects_count = Object.objects.count()
-    active_users_count = User.objects.filter(is_active=True).count()
-    regions_count = Region.objects.count()
+    # Простая страница профиля
+    user_sessions = Session_History.objects.filter(ID_User=request.user)
 
     context = {
-        'user_profile': user_profile,
-        'user_objects_count': user_objects_count,
-        'session_count': session_count,
-        'recent_sessions': recent_sessions,
-        'total_objects_count': total_objects_count,
-        'active_users_count': active_users_count,
-        'regions_count': regions_count,
+        'user_sessions': user_sessions,
+        'sessions_count': user_sessions.count(),
     }
-
     return render(request, 'users/profile.html', context)
