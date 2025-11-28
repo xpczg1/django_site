@@ -324,6 +324,33 @@
             height: 30px;
         }
     }
+
+    /* Фиксированная ширина для кнопок навигации */
+.navbar-nav .nav-link {
+    min-width: 80px;
+    text-align: center;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Для мобильных устройств уменьшим ширину */
+@media (max-width: 768px) {
+    .navbar-nav .nav-link {
+        min-width: 120px;
+        margin: 0.2rem auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-nav .nav-link {
+        min-width: 100px;
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem !important;
+    }
+}
+
 </style>
 {% endblock %}
 
@@ -339,7 +366,7 @@
                     <div class="floating-element"></div>
                 </div>
                 <div class="hero-content text-center">
-                    <h1 class="mb-4 text-white">Добро пожаловать на КартаОбъектов</h1>
+                    <h1 class="mb-4 text-white">Добро пожаловать на Карту Объектов</h1>
                     <p class="lead mb-4 text-white">
                         Это современная платформа для просмотра объектов на интерактивной карте.
                         Вы можете найти интересующие вас места, посмотреть их описание и расположение.
@@ -348,36 +375,24 @@
             </div>
 
             <div class="row mt-5">
-                <div class="col-md-4 mb-4">
+                <div class="col-md-6 mb-6">
                     <div class="card h-100">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">🗺️ Интерактивная карта</h5>
-                            <p class="card-text flex-grow-1">Просматривайте объекты на карте с возможностью определения вашего местоположения и удобной навигацией.</p>
+                            <p class="card-text flex-grow-1">Расположение всех объектов на карте с возможностью отслеживания местоположения.</p>
                             <a href="{% url 'map' %}" class="btn btn-primary mt-auto">Перейти к карте</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-6 mb-6">
                     <div class="card h-100">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">📋 Список объектов</h5>
-                            <p class="card-text flex-grow-1">Изучите полный каталог объектов с подробными описаниями, фотографиями и характеристиками.</p>
+                            <p class="card-text flex-grow-1">Просмотр полного списка объектов компании с основными данными.</p>
                             <a href="{% url 'object-list' %}" class="btn btn-primary mt-auto">Смотреть объекты</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">⚙️ Для администраторов</h5>
-                            <p class="card-text flex-grow-1">Добавляйте и редактируйте информацию об объектах через удобную админ-панель с расширенными возможностями.</p>
-                            {% if user.is_staff %}
-                                <a href="/admin/" class="btn btn-primary mt-auto">Админ-панель</a>
-                            {% else %}
-                                <a href="{% url 'login' %}" class="btn btn-primary mt-auto">Войти как администратор</a>
-                            {% endif %}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
