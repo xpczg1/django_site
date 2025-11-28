@@ -5,7 +5,6 @@
 
 {% block extra_css %}
     <style>
-        /* Стили для header */
         .navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
@@ -13,7 +12,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Анимация появления footer */
         .footer {
             animation: fadeIn 1s ease-out 0.3s both;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -27,7 +25,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Стили для кнопок в стиле хэдера и футера */
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
@@ -44,7 +41,6 @@
             background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
         }
 
-        /* Анимации для страницы */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -92,7 +88,6 @@
             z-index: 2;
         }
 
-        /* Стили для карточек */
         .profile-card {
             border-radius: 20px;
             border: none;
@@ -167,7 +162,6 @@
             opacity: 0.9;
         }
 
-        /* Обновленные стили для кнопок */
         .btn-outline-primary {
             border-radius: 8px;
             padding: 0.75rem 1.5rem;
@@ -189,7 +183,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Декоративные элементы */
         .floating-elements {
             position: absolute;
             width: 100%;
@@ -213,17 +206,377 @@
             66% { transform: translateY(-8px) rotate(240deg) scale(0.9); }
         }
 
-        /* Адаптивность */
         @media (max-width: 768px) {
             .hero-section { padding: 2rem 1.5rem; margin: 0.5rem 0 1.5rem 0; }
             .profile-card .card-body { padding: 1.5rem; }
             .info-grid { grid-template-columns: 1fr; }
         }
 
-        /* Стили для формы выхода */
         .logout-form {
             display: inline;
         }
+
+        .btn.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 0;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+            text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .navbar-brand:hover .logo {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            padding: 0.5rem 1rem !important;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-width: 80px;
+            text-align: center;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link.active {
+            background: rgba(255,255,255,0.15);
+            color: white !important;
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            .logo {
+                height: 35px;
+            }
+
+            .nav-link {
+                margin: 0.2rem 0;
+                text-align: center;
+                min-width: 120px;
+            }
+
+            .hero-section {
+                padding: 2rem 1.5rem;
+                margin: 0.5rem 0 1.5rem 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .logo {
+                height: 30px;
+            }
+
+            .nav-link {
+                min-width: 100px;
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem !important;
+            }
+        }
+
+        /* Анимации для страницы */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .page-enter {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            margin: 1rem 0 2rem 0;
+            color: white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.1"><polygon fill="white" points="0,1000 1000,0 1000,1000"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .lead {
+            font-size: 1.2rem;
+            color: #5a6c7d;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            line-height: 1.6;
+        }
+
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 20px;
+            border: 3px solid #fff;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .object-popup img {
+            max-width: 200px;
+            max-height: 150px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .object-popup {
+            text-align: center;
+        }
+
+        .object-popup h5 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .object-popup p {
+            color: #6c757d;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .object-popup .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .object-popup .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Стили для кнопки определения местоположения */
+        #locate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50px;
+            padding: 0.85rem 2rem;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        #locate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        #locate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        #locate-btn:hover::before {
+            left: 100%;
+        }
+
+        #locate-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Декоративные элементы */
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            left: 85%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            top: 80%;
+            left: 15%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            33% {
+                transform: translateY(-15px) rotate(120deg) scale(1.1);
+            }
+            66% {
+                transform: translateY(-8px) rotate(240deg) scale(0.9);
+            }
+        }
+
+        /* Кастомные стили для маркеров */
+        .leaflet-popup-content-wrapper {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .leaflet-popup-tip {
+            box-shadow: none;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 1.5rem;
+                margin: 0.5rem 0 1.5rem 0;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .lead {
+                font-size: 1rem;
+            }
+
+            #map {
+                height: 500px;
+                border-radius: 15px;
+            }
+
+            #locate-btn {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+        }
+
     </style>
 {% endblock %}
 
@@ -248,7 +601,6 @@
     </div>
 
     <div class="row">
-        <!-- Основная информация -->
         <div class="col-lg-8">
             <div class="card profile-card">
                 <div class="card-header">
@@ -257,73 +609,83 @@
                 <div class="card-body">
                     <div class="info-grid">
                         <div class="info-item">
-                            <div class="info-label">ФИО</div>
-                            <div class="info-value">{{ user.get_full_name|default:"Не указано" }}</div>
+                            <div class="info-label">Логин</div>
+                            <div class="info-value">{{ user.Login }}</div>
                         </div>
                         <div class="info-item">
-                            <div class="info-label">Имя пользователя</div>
-                            <div class="info-value">{{ user.username }}</div>
+                            <div class="info-label">Имя</div>
+                            <div class="info-value">{{ user.Name|default:"Не указано" }}</div>
                         </div>
                         <div class="info-item">
-                            <div class="info-label">Email</div>
-                            <div class="info-value">{{ user.email|default:"Не указан" }}</div>
+                            <div class="info-label">Фамилия</div>
+                            <div class="info-value">{{ user.Surname|default:"Не указано" }}</div>
                         </div>
                         <div class="info-item">
-                            <div class="info-label">Телефон</div>
-                            <div class="info-value">{{ user.userprofile.phone|default:"Не указан" }}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Регион</div>
-                            <div class="info-value">{{ user.userprofile.region.name|default:"Не указан" }}</div>
+                            <div class="info-label">Отчество</div>
+                            <div class="info-value">{{ user.Patronymic|default:"Не указано" }}</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">Роль</div>
-                            <div class="info-value">{{ user.userprofile.role.name|default:"Пользователь" }}</div>
+                            <div class="info-value">{{ user.ID_Role.Name_Role|default:"Пользователь" }}</div>
                         </div>
-                    </div>
-
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number">{{ user_objects_count }}</div>
-                            <div class="stat-label">Созданных объектов</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">{{ session_count }}</div>
-                            <div class="stat-label">Сессий за месяц</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">{{ user.date_joined|date:"d.m.Y" }}</div>
-                            <div class="stat-label">Дата регистрации</div>
+                        <div class="info-item">
+                            <div class="info-label">Последний вход</div>
+                            <div class="info-value">
+                                {% if user.last_login %}
+                                    {{ user.last_login|date:"d.m.Y H:i" }}
+                                {% else %}
+                                    Никогда
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- История сессий -->
             <div class="card profile-card">
                 <div class="card-header">
-                    <h4 class="mb-0 text-white">История сессий</h4>
+                    <h4 class="mb-0 text-white">История активности</h4>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Дата входа</th>
-                                    <th>IP адрес</th>
-                                    <th>Устройство</th>
+                                    <th>Дата</th>
+                                    <th>Время</th>
+                                    <th>Объект</th>
+                                    <th>Ответственный</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for session in recent_sessions %}
                                 <tr>
-                                    <td>{{ session.login_time|date:"d.m.Y H:i" }}</td>
-                                    <td>{{ session.ip_address }}</td>
-                                    <td>{{ session.user_agent|truncatechars:50 }}</td>
+                                    <td>
+                                        {% if session.Date %}
+                                            {{ session.Date|date:"d.m.Y" }}
+                                        {% else %}
+                                            Не указано
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if session.Time %}
+                                            {{ session.Time|time:"H:i" }}
+                                        {% else %}
+                                            Не указано
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if session.ID_Object %}
+                                            {{ session.ID_Object.Name_Object|default:"Объект" }}
+                                        {% else %}
+                                            Не указан
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ session.Main_Guard_Surname|default:"Не указан" }}</td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="3" class="text-center">Нет данных о сессиях</td>
+                                    <td colspan="4" class="text-center">Нет данных об активности</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -333,7 +695,6 @@
             </div>
         </div>
 
-        <!-- Боковая панель -->
         <div class="col-lg-4">
             <div class="card profile-card">
                 <div class="card-header">
@@ -341,17 +702,15 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-3">
-                        <a href="/admin/" class="btn btn-primary {% if not user.is_staff %}disabled{% endif %}">
-                            <i class="fas fa-cog me-2"></i>Админ-панель
+                        {% if user.is_staff or user.is_superuser %}
+                        <a href="/admin/" class="btn btn-primary">
+                            <i class="fas fa-cog me-2"></i>База данных
                         </a>
-                        <a href="{% url 'map' %}" class="btn btn-outline-primary">
-                            <i class="fas fa-map me-2"></i>Перейти к карте
-                        </a>
-                        <a href="#" class="btn btn-outline-secondary">
+                        {% endif %}
+                        <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary">
                             <i class="fas fa-edit me-2"></i>Редактировать профиль
                         </a>
 
-                        <!-- Исправленная кнопка выхода -->
                         <form method="post" action="{% url 'logout' %}" class="logout-form d-grid">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-outline-danger">
@@ -362,26 +721,18 @@
                 </div>
             </div>
 
-            <!-- Статус системы -->
-            <div class="card profile-card">
-                <div class="card-header">
-                    <h4 class="mb-0 text-white">Статус системы</h4>
+            {% if user.is_staff or user.is_superuser %}
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_objects_count }}</div>
+                    <div class="stat-label">Всего объектов</div>
                 </div>
-                <div class="card-body">
-                    <div class="info-item mb-3">
-                        <div class="info-label">Всего объектов в системе</div>
-                        <div class="info-value">{{ total_objects_count }}</div>
-                    </div>
-                    <div class="info-item mb-3">
-                        <div class="info-label">Активных пользователей</div>
-                        <div class="info-value">{{ active_users_count }}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Регионов в системе</div>
-                        <div class="info-value">{{ regions_count }}</div>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ active_users_count }}</div>
+                    <div class="stat-label">Активных пользователей</div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
