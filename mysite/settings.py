@@ -4,35 +4,21 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Загружаем переменные окружения из .env файла
-load_dotenv()
+load_dotenv()  # Добавьте эту строку
 
+# DEBUG должен быть True для разработки или правильно настроен для продакшена
+DEBUG = True  # Должно быть True для разработки
 
-ALLOWED_HOSTS = ['Chtotib.pythonanywhere.com', 'localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = ['*']
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-here')
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
-
-ALLOWED_HOSTS = [
-    'Chtotib.pythonanywhere.com',
-    'localhost',
-    '127.0.0.1',
-    'yourusername.pythonanywhere.com',  # замените на ваш username
-]
-
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # для collectstatic
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-qwer123456')
 
 # Application definition
 INSTALLED_APPS = [
+    'admin_interface',
+    'colorfield',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,10 +28,15 @@ INSTALLED_APPS = [
     'main',
     'objects',
     'users',
+
 ]
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+SILENCED_SYSTEM_CHECKS = ['security.W019']
+AUTH_USER_MODEL = 'main.Users'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Добавьте для обработки статических файлов
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -54,7 +45,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'mysite.urls'
+ROOT_URLCONF = 'main.urls'
 
 TEMPLATES = [
     {
@@ -110,6 +101,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files
 MEDIA_URL = '/media/'
@@ -128,3 +120,7 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+# Для статических файлов в продакшене
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

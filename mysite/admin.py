@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Roles, Users
+from .models import Roles, Users, Regions, Objects, Session_History
 
 @admin.register(Roles)
 class RolesAdmin(admin.ModelAdmin):
@@ -25,3 +25,8 @@ class CustomUserAdmin(UserAdmin):
     )
     search_fields = ('Login', 'Name', 'Surname')
     ordering = ('Login',)
+
+# Зарегистрируйте остальные модели
+admin.site.register(Regions)
+admin.site.register(Objects)
+admin.site.register(Session_History)

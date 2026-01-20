@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import MinLengthValidator
 
 
@@ -29,6 +29,15 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, Login, password=None, **extra_fields):
         if not Login:
             raise ValueError('Логин должен быть указан')
+
+        if 'ID_Role' not in extra_fields:
+            try:
+                user_role = Roles.objects.get(Name_Role='user')
+                extra_fields['ID_Role'] = user_role
+            except Roles.DoesNotExist:
+                user_role = Roles.objects.create(Name_Role='user')
+                extra_fields['ID_Role'] = user_role
+
         user = self.model(Login=Login, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -37,14 +46,29 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(self, Login, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        if 'ID_Role' not in extra_fields:
+            try:
+                admin_role = Roles.objects.get(Name_Role='admin')
+                extra_fields['ID_Role'] = admin_role
+            except Roles.DoesNotExist:
+                admin_role = Roles.objects.create(Name_Role='admin')
+                extra_fields['ID_Role'] = admin_role
+
         return self.create_user(Login, password, **extra_fields)
 
 
-class Users(AbstractBaseUser):
+class Users(AbstractBaseUser, PermissionsMixin):
     ID_User = models.AutoField(primary_key=True)
     ID_Role = models.ForeignKey(
         Roles,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         verbose_name='Роль пользователя'
     )
     Name = models.CharField(max_length=50, verbose_name='Имя')
@@ -56,14 +80,13 @@ class Users(AbstractBaseUser):
         verbose_name='Логин',
         validators=[MinLengthValidator(4)]
     )
-    # Убрано поле Password, так как оно уже есть в AbstractBaseUser
+    # НЕТ поля Password - оно наследуется из AbstractBaseUser
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'Login'
-    REQUIRED_FIELDS = ['Name', 'Surname', 'ID_Role']
+    REQUIRED_FIELDS = ['Name', 'Surname']
 
     objects = CustomUserManager()
 
@@ -74,117 +97,12 @@ class Users(AbstractBaseUser):
     def full_name(self):
         return f"{self.Surname} {self.Name} {self.Patronymic}".strip()
 
-    def has_perm(self, perm, obj=None):
-        return self.is_superuser
+    def get_full_name(self):
+        return self.full_name
 
-    def has_module_perms(self, app_label):
-        return self.is_superuser
+    def get_short_name(self):
+        return self.Name
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-
-
-class RegionsManager(models.Manager):
-    def get_by_natural_key(self, coordinates):
-        return self.get(Coordinates=coordinates)
-
-
-class Regions(models.Model):
-    ID_Region = models.AutoField(primary_key=True)
-    Coordinates = models.CharField(max_length=50, unique=True, verbose_name='Координаты')
-
-    objects = RegionsManager()
-
-    def natural_key(self):
-        return (self.Coordinates,)
-
-    def __str__(self):
-        return f"Регион {self.ID_Region} ({self.Coordinates})"
-
-    class Meta:
-        verbose_name = 'Регион'
-        verbose_name_plural = 'Регионы'
-
-
-class ObjectsManager(models.Manager):
-    def get_by_natural_key(self, name_object):
-        return self.get(Name_Object=name_object)
-
-
-class Objects(models.Model):
-    FENCE_TYPES = [
-        ('wood', 'Деревянный'),
-        ('metal', 'Металлический'),
-        ('concrete', 'Бетонный'),
-        ('chainlink', 'Сетка-рабица'),
-        ('other', 'Другой'),
-    ]
-
-    ID_Object = models.AutoField(primary_key=True)
-    ID_Region = models.ForeignKey(
-        Regions,
-        on_delete=models.CASCADE,
-        verbose_name='Регион'
-    )
-    Name_Object = models.CharField(max_length=50, verbose_name='Название объекта')
-    Length = models.FloatField(verbose_name='Длина')
-    Width = models.FloatField(verbose_name='Ширина')
-    Type_Of_Fence = models.CharField(
-        max_length=50,
-        choices=FENCE_TYPES,
-        verbose_name='Тип ограждения'
-    )
-
-    objects = ObjectsManager()
-
-    def natural_key(self):
-        return (self.Name_Object,)
-
-    def __str__(self):
-        return self.Name_Object
-
-    @property
-    def area(self):
-        return self.Length * self.Width
-
-    class Meta:
-        verbose_name = 'Объект'
-        verbose_name_plural = 'Объекты'
-        unique_together = ('ID_Region', 'Name_Object')
-
-
-class Session_HistoryManager(models.Manager):
-    def get_by_natural_key(self, date, time, id_user):
-        return self.get(Date=date, Time=time, ID_User=id_user)
-
-
-class Session_History(models.Model):
-    ID_Session = models.AutoField(primary_key=True)
-    ID_User = models.ForeignKey(
-        Users,
-        on_delete=models.CASCADE,
-        verbose_name='Пользователь'
-    )
-    ID_Object = models.ForeignKey(
-        Objects,
-        on_delete=models.CASCADE,
-        verbose_name='Объект'
-    )
-    Main_Guard_Surname = models.CharField(max_length=50, verbose_name='Фамилия главного охранника')
-    Date = models.DateField(verbose_name='Дата сессии')
-    Time = models.TimeField(verbose_name='Время сессии')
-
-    objects = Session_HistoryManager()
-
-    def natural_key(self):
-        return (self.Date, self.Time, self.ID_User_id)
-
-    def __str__(self):
-        return f"Сессия {self.ID_Session} - {self.Date} {self.Time}"
-
-    class Meta:
-        verbose_name = 'История сессии'
-        verbose_name_plural = 'История сессий'
-        unique_together = ('ID_User', 'ID_Object', 'Date', 'Time')
-        ordering = ['-Date', '-Time']
