@@ -113,7 +113,7 @@
                         <a class="nav-link" href="{% url 'map' %}">Карта</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'object-list' %}">Объекты</a>
+                       <a class="nav-link" href="{% url 'object_list' %}">Список объектов</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -125,7 +125,6 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'profile' %}">Профиль</a></li>
                                 {% if user.is_staff %}
-                                    <li><a class="dropdown-item" href="/admin/">Админка</a></li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти</a></li>

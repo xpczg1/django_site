@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Редактирование профиля - Карта объектов{% endblock %}
+
+{% block extra_css %}
+    <style>
+        /* Стили для header */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Анимация появления footer */
+        .footer {
+            animation: fadeIn 1s ease-out 0.3s both;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Стили для кнопок в стиле хэдера и футера */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        }
+
+        .btn-outline-secondary {
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        /* Анимации для страницы */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .page-enter {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            margin: 1rem 0 2rem 0;
+            color: white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.1"><polygon fill="white" points="0,1000 1000,0 1000,1000"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Стили для карточек */
+        .profile-card {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .profile-card .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1.5rem 2rem;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .profile-card .card-body {
+            padding: 2rem;
+        }
+
+        /* Стили для формы */
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Декоративные элементы */
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+            33% { transform: translateY(-15px) rotate(120deg) scale(1.1); }
+            66% { transform: translateY(-8px) rotate(240deg) scale(0.9); }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 1.5rem;
+                margin: 0.5rem 0 1.5rem 0;
+            }
+            .profile-card .card-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="page-enter">
+    <div class="row">
+        <div class="col-12">
+            <div class="hero-section">
+                <div class="floating-elements">
+                    <div class="floating-element" style="width: 80px; height: 80px; top: 20%; left: 10%;"></div>
+                    <div class="floating-element" style="width: 60px; height: 60px; top: 60%; left: 85%;"></div>
+                    <div class="floating-element" style="width: 40px; height: 40px; top: 80%; left: 15%;"></div>
+                </div>
+                <div class="hero-content text-center">
+                    <h1 class="text-white mb-3">✏️ Редактирование профиля</h1>
+                    <p class="lead text-white mb-0">
+                        Обновите вашу личную информацию
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card profile-card">
+                    <div class="card-header">
+                        <h4 class="mb-0 text-white">Редактирование профиля</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="first_name" class="form-label">Имя</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name"
+                                           value="{{ user.Name|default:'' }}" placeholder="Введите ваше имя">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="last_name" class="form-label">Фамилия</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name"
+                                           value="{{ user.Surname|default:'' }}" placeholder="Введите вашу фамилию">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="patronymic" class="form-label">Отчество</label>
+                                    <input type="text" class="form-control" id="patronymic" name="patronymic"
+                                           value="{{ user.Patronymic|default:'' }}" placeholder="Введите ваше отчество">
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="{% url 'profile' %}" class="btn btn-outline-secondary me-md-2">Отмена</a>
+                                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

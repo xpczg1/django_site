@@ -5,27 +5,351 @@
 {% block content %}
 
 <style>
-    /* Стили для header */
-    .navbar {
+     .navbar {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         padding: 1rem 0;
         transition: all 0.3s ease;
     }
 
-    /* Анимация появления footer */
-    .footer {
-        animation: fadeIn 1s ease-out 0.3s both;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        padding: 1rem 0;
+    .navbar-brand {
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: white !important;
         transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        padding: 0;
+    }
+
+    .navbar-brand:hover {
+        transform: translateY(-2px);
+        text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .logo {
+        height: 40px;
+        width: auto;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+    .navbar-brand:hover .logo {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .nav-link {
+        color: rgba(255,255,255,0.9) !important;
+        font-weight: 500;
+        margin: 0 0.5rem;
+        padding: 0.5rem 1rem !important;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .nav-link:hover {
+        color: white !important;
+        background: rgba(255,255,255,0.1);
+        transform: translateY(-2px);
+    }
+
+    .nav-link:hover::before {
+        left: 100%;
+    }
+
+    .nav-link.active {
+        background: rgba(255,255,255,0.15);
+        color: white !important;
+    }
+
+    .navbar-toggler {
+        border: none;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .navbar-toggler:focus {
+        box-shadow: none;
+    }
+
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    /* Анимации для страницы */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
+
+    .page-enter {
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 4rem 2rem;
+        margin: 2rem 0 3rem 0;
+        color: white;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.1"><polygon fill="white" points="0,1000 1000,0 1000,1000"/></svg>');
+        background-size: cover;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+        animation: fadeInUp 0.8s ease-out;
+        animation-fill-mode: both;
+        background: white;
+    }
+
+    .card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    }
+
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+
+    .card-body {
+        padding: 2.5rem;
+    }
+
+    .card-title {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 1.2rem;
+        font-size: 1.4rem;
+    }
+
+    .card-text {
+        color: #6c757d;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 50px;
+        padding: 0.85rem 2.5rem;
+        font-weight: 600;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        font-size: 1rem;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.6s;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary:active {
+        transform: translateY(-1px);
+    }
+
+    h1 {
+        font-weight: 800;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        animation: fadeInUp 0.8s ease-out;
+        font-size: 3rem;
+    }
+
+    .lead {
+        font-size: 1.3rem;
+        color: #5a6c7d;
+        animation: fadeInUp 0.8s ease-out 0.2s both;
+        line-height: 1.8;
+        font-weight: 400;
+    }
+
+    /* Декоративные элементы */
+    .floating-elements {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .floating-element {
+        position: absolute;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        animation: float 8s ease-in-out infinite;
+    }
+
+    .floating-element:nth-child(1) {
+        width: 100px;
+        height: 100px;
+        top: 10%;
+        left: 10%;
+        animation-delay: 0s;
+    }
+
+    .floating-element:nth-child(2) {
+        width: 70px;
+        height: 70px;
+        top: 60%;
+        left: 80%;
+        animation-delay: 2s;
+    }
+
+    .floating-element:nth-child(3) {
+        width: 50px;
+        height: 50px;
+        top: 80%;
+        left: 20%;
+        animation-delay: 4s;
+    }
+
+    .floating-element:nth-child(4) {
+        width: 60px;
+        height: 60px;
+        top: 20%;
+        left: 75%;
+        animation-delay: 6s;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0) rotate(0deg) scale(1);
+        }
+        33% {
+            transform: translateY(-20px) rotate(120deg) scale(1.1);
+        }
+        66% {
+            transform: translateY(-10px) rotate(240deg) scale(0.9);
+        }
+    }
+
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 768px) {
+        .logo {
+            height: 35px;
+        }
+
+        .nav-link {
+            margin: 0.2rem 0;
+            text-align: center;
+        }
+
+        .hero-section {
+            padding: 3rem 1.5rem;
+            margin: 1rem 0 2rem 0;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+        }
+
+        .lead {
+            font-size: 1.1rem;
+        }
+
+        .card-body {
+            padding: 2rem 1.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .logo {
+            height: 30px;
+        }
+    }
+
+    /* Фиксированная ширина для кнопок навигации */
+.navbar-nav .nav-link {
+    min-width: 80px;
+    text-align: center;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Для мобильных устройств уменьшим ширину */
+@media (max-width: 768px) {
+    .navbar-nav .nav-link {
+        min-width: 120px;
+        margin: 0.2rem auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-nav .nav-link {
+        min-width: 100px;
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem !important;
+    }
+}
 
     /* Стили для кнопок в стиле хэдера и футера */
     .btn-primary {

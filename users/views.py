@@ -2,13 +2,33 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from django.utils import timezone
-from datetime import timedelta
-from .models import SessionHistory, UserProfile, Region
-from objects.models import Object
-from django.contrib.auth.models import User
+from django.db.models import Count
+from datetime import datetime, timedelta
+
+# Импортируем модели из objects приложения
+from objects.models import Objects, Regions, Session_History
+
+
+def home(request):
+    """Главная страница"""
+    try:
+        total_objects = Objects.objects.count()
+        total_regions = Regions.objects.count()
+        total_sessions = Session_History.objects.count()
+    except Exception as e:
+        # Если база данных еще не готова
+        total_objects = total_regions = total_sessions = 0
+
+    context = {
+        'total_objects': total_objects,
+        'total_regions': total_regions,
+        'total_sessions': total_sessions,
+    }
+    return render(request, 'users/home.html', context)
+
 
 def register(request):
+    """Регистрация пользователя"""
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -19,47 +39,77 @@ def register(request):
         form = UserCreationForm()
     return render(request, 'users/register.html', {'form': form})
 
-def home(request):
-    return render(request, 'users/home.html')
 
 def map_view(request):
-    return render(request, 'users/map.html')
+    """Карта объектов"""
+    objects = Objects.objects.all()
+    context = {
+        'objects': objects,
+    }
+    return render(request, 'users/map.html', context)
+
 
 @login_required
 def profile(request):
-    try:
-        user_profile = UserProfile.objects.get(user=request.user)
-    except UserProfile.DoesNotExist:
-        user_profile = UserProfile.objects.create(user=request.user)
+    """Профиль пользователя"""
+    # Получаем все сессии пользователя
+    user_sessions = Session_History.objects.filter(ID_User=request.user).order_by('-login_time')[:10]
 
-    # Получаем данные для профиля
-    user_objects_count = Object.objects.filter(created_by=request.user).count()
-
-    # Сессии за последний месяц
-    month_ago = timezone.now() - timedelta(days=30)
-    session_count = SessionHistory.objects.filter(
-        user=request.user,
-        login_time__gte=month_ago
+    # Подсчет сессий за последний месяц
+    last_month = datetime.now() - timedelta(days=30)
+    session_count = Session_History.objects.filter(
+        ID_User=request.user,
+        login_time__gte=last_month
     ).count()
 
-    # Последние 5 сессий
-    recent_sessions = SessionHistory.objects.filter(
-        user=request.user
-    ).order_by('-login_time')[:5]
+    # Подсчет объектов пользователя
+    user_objects_count = Objects.objects.filter(ID_User=request.user).count()
 
-    # Статистика системы
-    total_objects_count = Object.objects.count()
+    # Общая статистика системы
+    total_objects_count = Objects.objects.count()
+
+    # Используем встроенную модель User вместо Users
+    from django.contrib.auth.models import User
     active_users_count = User.objects.filter(is_active=True).count()
-    regions_count = Region.objects.count()
+
+    regions_count = Regions.objects.count()
 
     context = {
-        'user_profile': user_profile,
-        'user_objects_count': user_objects_count,
+        'user': request.user,
+        'recent_sessions': user_sessions,
         'session_count': session_count,
-        'recent_sessions': recent_sessions,
+        'user_objects_count': user_objects_count,
         'total_objects_count': total_objects_count,
         'active_users_count': active_users_count,
         'regions_count': regions_count,
     }
-
     return render(request, 'users/profile.html', context)
+
+
+@login_required
+def edit_profile(request):
+    """Редактирование профиля пользователя"""
+    if request.method == 'POST':
+        user = request.user
+
+        # Обновляем основные поля
+        user.first_name = request.POST.get('first_name', '')
+        user.last_name = request.POST.get('last_name', '')
+        user.email = request.POST.get('email', '')
+
+        # Сохраняем изменения
+        user.save()
+
+        messages.success(request, 'Профиль успешно обновлен!')
+        return redirect('profile')
+
+    return render(request, 'users/edit_profile.html')
+
+
+def object_list(request):
+    """Список объектов"""
+    objects = Objects.objects.all()
+    context = {
+        'objects': objects,
+    }
+    return render(request, 'users/object_list.html', context)
